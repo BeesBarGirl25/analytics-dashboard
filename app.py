@@ -2,8 +2,9 @@ from flask import Flask, render_template, request, jsonify
 from utils.data_loader import load_and_normalize_json
 from utils.preprocess import prepare_plot_data, extend_data_without_merge
 from utils.plotly_viz import plot_metrics_plotly
-from utils.analytics_by_team import calculate_team_metrics
+from utils.analytics_by_team import calculate_team_metrics, squad_categorized
 from utils.wider_utils import time_adjustment
+from utils.references_and_lookups import categories
 import os
 import logging
 import pandas as pd
@@ -78,6 +79,52 @@ def fetch_data():
         logging.error(f"Unexpected error in fetch_data: {e}")
         return jsonify({"error": "An unexpected error occurred."}), 500
 
+@app.route("/filter-team", methods=["POST"])
+def filter_team():
+    try:
+        # Get the match_id and team name from the request
+        data = request.json
+        logging.info(f"Data received from frontend: {data}")
+        match_id = data.get("match_id")
+        team_name = data.get("team_name")  # Ensure the team name is also being sent in the payload
+
+        if not match_id:
+            return jsonify({"error": "No match ID provided"}), 400
+
+        # Path to the match file
+        file_path = os.path.join(DATA_PATH, f"{match_id}.json")
+        if not os.path.exists(file_path):
+            logging.error(f"File not found: {file_path}")
+            return jsonify({"error": f"File not found: {file_path}"}), 404
+
+        # Load and normalize the data
+        dfEvent = load_and_normalize_json(file_path)
+        if dfEvent is None or dfEvent.empty:
+            raise ValueError("DataFrame is empty after loading JSON.")
+
+        # Filter the DataFrame for the selected team
+        if not team_name:
+            return jsonify({"error": "No team name provided"}), 400
+        team_data = dfEvent[dfEvent['team.name'] == team_name]
+
+
+        # Process the filtered data using squad_categorized
+        categorized_df, unmatched_positions = squad_categorized(categories, team_data)
+
+        # Replace NaN with None (JSON-friendly null value)
+        categorized_df = categorized_df.fillna("N/A")
+        # Ensure the columns are in the desired order
+        desired_order = ["Goalkeeper", "Defenders", "Midfielders", "Forwards"]
+        categorized_df = categorized_df[desired_order]  # Reorder columns
+
+
+# Convert the DataFrame to JSON
+        categorized_json = categorized_df.to_dict(orient="list")
+        logging.info(f"Unmatched positions: {unmatched_positions}")
+        return jsonify({"categorized": categorized_json, "unmatched": unmatched_positions})
+    except Exception as e:
+        logging.error(f"Unexpected error in filter_team: {e}")
+        return jsonify({"error": "An unexpected error occurred."}), 500
 
 
 def process_graph_data(graph_data, layout_data):
