@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Analytics Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Top Task Bar -->
+    <div class="task-bar">
+        <h1>Game Analytics Dashboard</h1>
+        <div id="game-selector">
+            <label for="match-selection">Select a Game:</label>
+            <select id="match-selection">
+                {% for match in matches_with_teams %}
+                    <option value="{{ match.match_id }}">{{ match.teams }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Graph container -->
+        <div id="graph-div">
+            {{ default_graph_html|safe }}
+        </div>
+        
+        <!-- Tab Section with Content Area -->
+        <div class="tabs-section">
+            <!-- Tabs -->
+            <div id="tab-container">
+                <div class="tab-link active" onclick="openTab(event, 'Tab1')">Match Overview</div>
+                <div class="tab-link" data-team="Team A" onclick="openTab(event, 'Tab2')">Team 1</div>
+                <div class="tab-link" data-team="Team B" onclick="openTab(event, 'Tab3')">Team 2</div>
+            </div>
+        
+            <!-- Tab Content Area -->
+            <div id="panel-container">
+                <div id="Tab1" class="tab-panel active">
+                    <h3>Match Overview</h3>
+                    <p>Details about the team's performance and stats.</p>
+                </div>
+                <div id="Tab2" class="tab-panel">
+                    <h3>Team 1</h3>
+                    <p>Individual player statistics and analysis go here.</p>
+                </div>
+                <div id="Tab3" class="tab-panel">
+                    <h3>Team 2</h3>
+                    <p>Individual player statistics and analysis go here.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- External JS File -->
+    <script src="{{ url_for('static', filename='js/update_graph.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/switch_tab.js') }}"></script>
+    <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
+</body>
+</html>
