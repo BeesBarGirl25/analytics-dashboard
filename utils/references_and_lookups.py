@@ -11,12 +11,20 @@ categories = {
         "Left Wing Back": "Defenders",
         "Right Defensive Midfield": "Midfielders",
         "Left Defensive Midfield": "Midfielders",
+        "Center Defensive Midfield": "Midfielders",
         "Defensive Midfield": "Midfielders",
         "Central Midfield": "Midfielders",
         "Attacking Midfield": "Midfielders",
         "Right Midfield": "Midfielders",
+        "Left Midfield": "Midfielders",
+        "Right Center Midfield": "Midfielders",
+        "Left Center Midfield": "Midfielders",
+        "Center Attacking Midfield": "Midfielders",
+        "Right Attacking Midfield": "Midfielders",
+        "Left Attacking Midfield": "Midfielders",
         "Left Center Forward": "Forwards",
         "Right Wing": "Forwards",
         "Left Wing": "Forwards",
-        "Center Forward": "Forwards"
+        "Center Forward": "Forwards",
+        "Right Center Forward": "Forwards"
     }

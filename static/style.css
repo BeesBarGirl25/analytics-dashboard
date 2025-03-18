@@ -78,7 +78,7 @@ main {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
     width: 60%; /* Set the width to 45% of the parent container */
     height: 90%; /* Ensure the div's height fills the available space */
-    padding: 1%; /* Add some internal spacing */
+    padding: 0%; /* Add some internal spacing */
     margin: 1%; /* Add margin for separation from edges */
     box-sizing: border-box; /* Include padding in the dimensions */
     display: flex; /* Enable flexbox for alignment */
@@ -103,48 +103,105 @@ main {
 
 /* Tabs */
 /* Tab container styling */
-#tab-container {
-    display: flex; /* Enable flexbox for layout */
-    justify-content: space-between; /* Ensure tabs span the width evenly */
-    align-items: stretch; /* Ensure tabs are the same height */
-    width: 100%; /* Tabs take the full width of the container */
-    border-bottom: 2px solid #ccc; /* For a clean divider between tabs and content */
-    margin-bottom: 10px;
+.tabs {
+    display: flex;
+    width: 100%; /* Ensure the tabs take up the full width of the parent container */
+    gap: 0; /* Remove spacing between tabs */
 }
 
-/* Tab link styling */
 .tab-link {
-    flex: 1; /* Make all tabs take equal space */
-    text-align: center; /* Center the text within each tab */
+    flex: 1; /* Ensures all tabs equally divide the available width */
+    padding: 10px 0;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px 8px 0px 0px;
+    background-color: #f9f9f9;
     cursor: pointer;
-    padding: 10px 0; /* Adjust vertical padding */
-    background-color: #eee; /* Default tab background */
-    border: 1px solid #ccc; /* Tab border */
-    border-bottom: none; /* Remove bottom border for active tabs */
-    border-radius: 8px 8px 0 0; /* Rounded corners */
-    margin-right: -1px; /* Prevent spacing between tabs */
-    box-sizing: border-box; /* Include padding and border in size calculation */
+    font-size: 16px;
 }
 
-/* Active tab */
 .tab-link.active {
-    background-color: #ddd; /* Highlight the active tab */
-    font-weight: bold;
-}
-
-
-/* Content Panels */
-#panel-container {
-    flex-grow: 1; /* Expand to fill remaining space in the container */
-    overflow-y: auto; /* Add scrolling if content overflows */
+    background-color: #ddd;
+    border-color: #ddd;
 }
 
 .tab-panel {
-    display: none;
-    padding: 1%;
+    display: none; /* Hide inactive panels */
+    width: 100%; /* Ensure panels take up the full container width */
+    height: 100%; /* Optional: match the container height */
+    overflow: auto; /* Enable scrolling for overflowing content */
+    padding: 5px; /* Add padding for better layout */
+    box-sizing: border-box; /* Include padding and borders in width/height calculations */
 }
 
 .tab-panel.active {
+    display: block; /* Show the active panel */
+}
+
+
+.categorized-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.categorized-table th, .categorized-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.categorized-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    font-size:15px;
+}
+
+.categorized-table td {
+    background-color: #ffffff;
+    font-size:12px;
+}
+
+#shared-content-placeholder {
+    padding: 5px;
+    overflow: auto; /* Enable scrolling if content overflows */
+}
+
+/* Ensure the collapsible section spans the full width */
+.collapsible-section {
+    margin-top: 5px; /* Add spacing between collapsible and other content */
+}
+
+/* Collapsible header styled to fit inside the shared content */
+.collapsible {
+    background-color: #007BFF;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 5px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease;
+}
+
+.collapsible:hover {
+    background-color: #0056b3;
+}
+
+/* Collapsible content styling */
+.collapsible-content {
+    display: none;
+    padding: 15px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+/* Expanded state */
+.collapsible-content.show {
     display: block;
 }
 

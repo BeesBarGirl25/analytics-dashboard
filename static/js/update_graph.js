@@ -36,3 +36,7 @@ document.getElementById('match-selection').addEventListener('change', function (
     const selectedMatchId = this.value; // Get the selected match ID
     updateGraph(selectedMatchId); // Trigger graph update
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    Plotly.Plots.resize('graph-div');
+});

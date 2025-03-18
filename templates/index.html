@@ -29,25 +29,29 @@
         <!-- Tab Section with Content Area -->
         <div class="tabs-section">
             <!-- Tabs -->
-            <div id="tab-container">
-                <div class="tab-link active" onclick="openTab(event, 'Tab1')">Match Overview</div>
-                <div class="tab-link" data-team="Team A" onclick="openTab(event, 'Tab2')">Team 1</div>
-                <div class="tab-link" data-team="Team B" onclick="openTab(event, 'Tab3')">Team 2</div>
+            <div class="tabs">
+                <button class="tab-link" onclick="openTab(event, 'Tab1')">Match Analysis</button>
+                <button class="tab-link" onclick="openTab(event, 'shared-content')">Tab 2</button>
+                <button class="tab-link" onclick="openTab(event, 'shared-content')">Tab 3</button>
             </div>
-        
-            <!-- Tab Content Area -->
-            <div id="panel-container">
-                <div id="Tab1" class="tab-panel active">
-                    <h3>Match Overview</h3>
-                    <p>Details about the team's performance and stats.</p>
-                </div>
-                <div id="Tab2" class="tab-panel">
-                    <h3>Team 1</h3>
-                    <p>Individual player statistics and analysis go here.</p>
-                </div>
-                <div id="Tab3" class="tab-panel">
-                    <h3>Team 2</h3>
-                    <p>Individual player statistics and analysis go here.</p>
+
+            <div id="Tab1" class="tab-panel active">
+                <p>Content for Tab 1</p>
+            </div>
+            <div id="shared-content" class="tab-panel">
+                <div id="shared-content-placeholder">
+                    <!-- Collapsible Section for Squad -->
+                    <div class="collapsible-section">
+                        <div class="collapsible" id="squad-header">
+                            <span>Squad</span>
+                            <span class="arrow">&#x25BC;</span> <!-- Down arrow -->
+                        </div>
+                        <div class="collapsible-content" id="squad-section">
+                            <div id="team-categorized-container">
+                                <!-- Dynamically generated table will appear here -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
