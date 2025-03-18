@@ -61,6 +61,12 @@ document.querySelectorAll('.tab-link').forEach(tab => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
+
+            // Check if the response has content
+            if (response.status === 204) {
+                console.log("No content returned from the server.");
+                return null; // Gracefully handle empty response
+            }
             return response.json();
         })
         .then(data => {

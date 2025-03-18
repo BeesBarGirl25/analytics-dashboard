@@ -88,8 +88,12 @@ def filter_team():
         match_id = data.get("match_id")
         team_name = data.get("team_name")  # Ensure the team name is also being sent in the payload
 
+        if team_name is None:
+            logging.info("Team name is None. Exiting function.")
+            return jsonify({"message": "No team name provided, exiting function"}), 200
+
         if not match_id:
-            return jsonify({"error": "No match ID provided"}), 400
+                return jsonify({"error": "No match ID provided"}), 400
 
         # Path to the match file
         file_path = os.path.join(DATA_PATH, f"{match_id}.json")
@@ -114,11 +118,12 @@ def filter_team():
         # Replace NaN with None (JSON-friendly null value)
         categorized_df = categorized_df.fillna("N/A")
         # Ensure the columns are in the desired order
+        # Desired column order
         desired_order = ["Goalkeeper", "Defenders", "Midfielders", "Forwards"]
-        categorized_df = categorized_df[desired_order]  # Reorder columns
 
+        # Reindex DataFrame to match the desired order (ignore missing columns)
+        categorized_df = categorized_df.reindex(columns=desired_order)
 
-# Convert the DataFrame to JSON
         categorized_json = categorized_df.to_dict(orient="list")
         logging.info(f"Unmatched positions: {unmatched_positions}")
         return jsonify({"categorized": categorized_json, "unmatched": unmatched_positions})
