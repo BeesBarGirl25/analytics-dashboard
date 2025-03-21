@@ -1,0 +1,42 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+header {
+    background-color: #141414; /* Primary header background */
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+nav {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-tab {
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 8px 16px;
+    background-color: #7fb3f1; /* Light shade of blue */
+    color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-tab:hover, .nav-tab.active {
+    background-color: #4a90e2; /* Darker shade of blue */
+    color: white;
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Analytics Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/base.css">
+    <style>
+        /* Internal CSS for Navbar Styles */
+
+    </style>
+</head>
+<body>
+<header>
+    <h1>Analytics Dashboard</h1>
+    <nav>
+        <a href="#" class="nav-tab">Competition</a>
+        <a href="#" class="nav-tab">Team</a>
+        <a href="#" class="nav-tab">Country</a>
+        <a href="#" class="nav-tab">Match</a>
+        <a href="#" class="nav-tab">Player</a>
+    </nav>
+</header>
+<main>
+    {% block content %}{% endblock %}
+</main>
+<footer>
+    <p>&copy; 2025 Analytics Dashboard</p>
+</footer>
+</body>
+</html>
