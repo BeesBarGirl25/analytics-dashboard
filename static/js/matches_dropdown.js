@@ -27,18 +27,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function populateMatchesDropdown(competition_id, season_id) {
+    const matchDropdown = document.getElementById('matchDropdown'); // Matches dropdown container
+    const selectedItemMatches = document.getElementById('selectedItemMatches'); // Matches dropdown toggle button
+    const graphContainer = document.getElementById('match-graph-container'); // Graph container
+
+    // Clear previous matches and graph content
+    matchDropdown.innerHTML = '<div class="loading">Loading matches...</div>'; // Add a loading message
+    selectedItemMatches.textContent = 'Select a Match'; // Reset the selected match display
+    graphContainer.innerHTML = '<p>Please select a match to view its graph.</p>'; // Reset the graph container
+
+    // Ensure dropdown visibility toggle listener is attached properly
+    selectedItemMatches.onclick = function () {
+        const isVisible = matchDropdown.style.display === 'block';
+        matchDropdown.style.display = isVisible ? 'none' : 'block';
+    };
+
     // Fetch matches from the backend
     fetch('/fetch_matches', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ competition_id, season_id }),
-})
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ competition_id, season_id }),
+    })
     .then(response => response.json())
     .then(data => {
-        const matchDropdown = document.getElementById('matchDropdown');
-        const selectedItemMatches = document.getElementById('selectedItemMatches');
-        matchDropdown.innerHTML = ''; // Clear existing options
+        // Clear the loading message
+        matchDropdown.innerHTML = '';
 
+        // Organize data by competition stages
         const groupedData = data.reduce((groups, item) => {
             const { competition_stage, value, text } = item;
             if (!groups[competition_stage]) {
@@ -48,11 +63,14 @@ function populateMatchesDropdown(competition_id, season_id) {
             return groups;
         }, {});
 
+        // Populate the matches dropdown
         Object.entries(groupedData).forEach(([competitionStage, matches]) => {
+            // Create a stage header
             const competitionStageDiv = document.createElement('div');
             competitionStageDiv.className = 'stage';
             competitionStageDiv.textContent = competitionStage;
 
+            // Create a list of matches under this stage
             const matchesList = document.createElement('div');
             matchesList.className = 'matches-list';
 
@@ -60,39 +78,43 @@ function populateMatchesDropdown(competition_id, season_id) {
                 const matchDiv = document.createElement('div');
                 matchDiv.className = 'match';
                 matchDiv.textContent = text;
-                matchDiv.dataset.value = value; // Use `dataset` for custom attributes
+                matchDiv.dataset.value = value;
 
-                matchDiv.addEventListener('click', function () {
-                    selectedItemMatches.textContent = text;
-                    matchDropdown.style.display = 'none'; // Collapse dropdown
-                    console.log(`Selected: Match ID ${value}`);
+                // Attach the event listener to dynamically handle match selection
+                matchDiv.onclick = function () {
+                    selectedItemMatches.textContent = text; // Update the selected match display
+                    matchDropdown.style.display = 'none'; // Collapse the dropdown
+
+                    // Dispatch a custom event for the selected match
                     const event = new CustomEvent('MatchDropdownPopulated', {
                         detail: { match_id: value },
                     });
                     document.dispatchEvent(event);
-                });
+                };
 
                 matchesList.appendChild(matchDiv);
             });
 
-            competitionStageDiv.addEventListener('click', function () {
+            // Add a toggle to show/hide the matches under this stage
+            competitionStageDiv.onclick = function () {
                 const isVisible = matchesList.style.display === 'block';
                 matchesList.style.display = isVisible ? 'none' : 'block';
-            });
+            };
 
+            // Append the stage and matches to the dropdown
             matchDropdown.appendChild(competitionStageDiv);
             matchDropdown.appendChild(matchesList);
         });
 
-        selectedItemMatches.addEventListener('click', function () {
-            const isVisible = matchDropdown.style.display === 'block';
-            matchDropdown.style.display = isVisible ? 'none' : 'block';
-        });
+        console.log('Matches dropdown populated successfully.');
     })
     .catch(error => {
         console.error('Error fetching matches:', error);
+        matchDropdown.innerHTML = '<div class="error">Error loading matches. Please try again.</div>'; // Show error message
     });
 }
+
+
 
 function getMatchData(match_id) {
     return new Promise((resolve, reject) => {

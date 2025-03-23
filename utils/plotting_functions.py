@@ -3,7 +3,7 @@ from utils.match_analysis_utils import cumulative_stats
 from flask import current_app
 
 def generate_match_graph(match_data):
-    match_data = match_data[['team', 'minute', 'shot_outcome', 'shot_statsbomb_xg']]
+    match_data = match_data[['team', 'minute', 'shot_outcome', 'shot_statsbomb_xg', 'period']]
 
     # Separate stats for Team 1 and Team 2
     team_1 = match_data[match_data['team'] == match_data['team'].unique()[0]]
@@ -56,9 +56,12 @@ def generate_match_graph(match_data):
         name=f'{team_2_name} Goals',
         line=dict(color='blue')
     ))
+    current_app.logger.debug(f"Periods: ${match_data['period'].value_counts()}")
+
+    unique_periods = match_data['period'].unique()
 
     # Check for data in extra time (90–120 mins) and add shaded box
-    if not match_data[(match_data['minute'] >= 90) & (match_data['minute'] <= 120)].empty:
+    if not set(unique_periods).issubset({1, 2}):
         fig.add_shape(
             type="rect",
             x0=90, x1=x_max, y0=0, y1=y_max + 0.5,
@@ -73,7 +76,7 @@ def generate_match_graph(match_data):
         )
 
     # Check for data in penalties (120+ mins) and add shaded box
-    if not match_data[match_data['minute'] > 120].empty:
+    if (match_data['period'].max() == 5):
         fig.add_shape(
             type="rect",
             x0=120, x1=match_data['minute'].max(), y0=0, y1=y_max + 0.5,
