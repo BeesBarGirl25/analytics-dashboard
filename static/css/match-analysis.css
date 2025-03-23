@@ -1,0 +1,185 @@
+.match-analysis-header {
+    display: flex;
+    align-items: center; /* Align items vertically in the center */
+    gap: 20px; /* Add some space between the title and the dropdown */
+}
+
+.match-analysis-header label {
+    margin-right: 10px; /* Space between the label and the dropdown */
+}
+
+.selected-item {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #00A86B; /* Matches dropdown background */
+}
+
+.dropdown-list {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #333; /* Matches sidebar for consistency */
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Competition Styling */
+.stage {
+    padding: 10px;
+    font-weight: bold;
+    background-color: #333;
+    color: white;
+    cursor: pointer;
+    border-bottom: 1px solid #444; /* Subtle divider between competitions */
+}
+
+.stage:hover {
+    background-color: #444; /* Slight highlight on hover */
+}
+
+/* Seasons Nested List */
+.matches-list {
+    display: none; /* Hidden until competition is clicked */
+    padding-left: 20px;
+    background-color: #333;
+}
+
+.match {
+    padding: 8px;
+    color: #ccc; /* Slightly lighter color for seasons */
+    cursor: pointer;
+}
+
+.match:hover {
+    background-color: #444;
+    color: white;
+}
+
+.match-analysis-content {
+    display: flex; /* Flexbox layout */
+    justify-content: space-between; /* Add space between the two divs */
+    align-items: flex-start; /* Align divs at the top */
+    gap: 10px; /* Space between divs */
+    width: 100%; /* Adjust width to fit within the page */
+}
+
+#match-graph-container,
+#match-analysis-tables {
+    flex: 1; /* Allow each div to take equal space */
+    max-width: 49%; /* Limit each div to 48% of the container width */
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
+    background-color: #f4f4f4;
+    padding: 20px; /* Adds inner spacing */
+    box-sizing: border-box; /* Ensures padding is included in the width */
+    height: 80vh;
+    margin: 10px 10px 10px 10px; /* Centers the div with a 20px top/bottom margin */
+}
+
+.match-analysis-tabs {
+    display: flex; /* Flexbox layout */
+    justify-content: space-between; /* Distribute buttons equally */
+    align-items: stretch; /* Stretch buttons to fill the container height */
+    width: 100%; /* Ensure the tabs container spans the full width */
+    margin-bottom: 20px; /* Add spacing below the tabs */
+}
+
+.tab-button {
+    flex: 1; /* Make each button take up equal space */
+    text-align: center; /* Center the text inside the button */
+    padding: 10px 0; /* Adjust padding for consistent button height */
+    font-size: 16px; /* Match the rest of the site's font size */
+    font-weight: bold;
+    background-color: #00A86B; /* Match your site's color scheme */
+    border: none; /* Remove borders */
+    color: white; /* Text color */
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth color transition */
+}
+
+.tab-button:hover {
+    background-color: #00865A; /* Darker green on hover */
+}
+
+.tab-button.active {
+    background-color: #004C3F; /* Highlight the active tab */
+}
+
+/* Add rounded edges to the first and last buttons */
+.tab-button:first-child {
+    border-radius: 10px 0 0 10px; /* Round the left corners */
+}
+
+.tab-button:last-child {
+    border-radius: 0 10px 10px 0; /* Round the right corners */
+}
+
+.tab-button + .tab-button {
+    border-left: 1px solid #004C3F; /* Add a subtle divider between tabs */
+}
+
+.tab-content {
+    display: none; /* Hide all tab contents by default */
+}
+
+.tab-content.active {
+    display: block; /* Only display the active tab content */
+}
+
+/* General table styling */
+.squad-table {
+    width: 100%;
+    border-collapse: separate; /* Slight separation for clearer lines */
+    border-spacing: 0;
+    text-align: center;
+    font-size: 14px;
+    background-color: #ffffff; /* White background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    overflow: hidden;
+}
+
+/* Header styling */
+.squad-table th {
+    background-color: #004C3F; /* Professional blue for headers */
+    color: #ffffff; /* White text for contrast */
+    padding: 12px 16px; /* Comfortable padding */
+    font-weight: bold;
+    text-transform: uppercase; /* Add emphasis */
+    border: none;
+    text-align: center;
+}
+
+/* Data cell styling */
+.squad-table td {
+    padding: 12px 16px; /* Spacing for readability */
+    border-bottom: 1px solid #ddd; /* Light divider between rows */
+}
+
+/* Row styling */
+.squad-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9; /* Soft alternating row colors */
+}
+
+.squad-table tbody tr:nth-child(even) {
+    background-color: #ffffff; /* White for contrast */
+}
+
+.squad-table tbody td:hover {
+    background-color: #00865A; /* Light hover effect */
+    transition: background-color 0.3s ease; /* Smooth interaction */
+}
+
+/* Handling 'NaN' values */
+.squad-table td:empty {
+    color: #888888; /* Gray text for empty cells */
+    font-style: italic; /* Make it visually distinct */
+    content: "No Data"; /* Informative placeholder */
+}
+
+

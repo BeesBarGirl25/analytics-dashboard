@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="match-analysis-header">
+        <h2>Match Analysis</h2>
+        <div id="matchMenu" class="custom-dropdown">
+            <div class="selected-item" id="selectedItemMatches">Select a Match</div>
+            <div class="dropdown-list" id="matchDropdown">
+                <!-- Dynamic competitions and seasons will be added here -->
+            </div>
+        </div>
+    </div>
+    <div class="match-analysis-content">
+        <div id="match-graph-container">
+            <h3> Match Graphs will go here</h3>
+        </div>
+        <div id="match-analysis-tables">
+            <div class="match-analysis-tabs">
+                <button class="tab-button active" onclick="showTab('matchTab')">Match</button>
+                <button class="tab-button" onclick="showTab('team1Tab')">Team 1</button>
+                <button class="tab-button" onclick="showTab('team2Tab')">Team 2</button>
+            </div>
+            <div id="matchTab" class="tab-content active">
+                <p>Match-level data will go here</p>
+            </div>
+            <div id="team1Tab" class="tab-content">
+                <div id="team1-table-container">
+                    <p>Team 1 table will load here</p>
+                </div>
+            </div>
+            <div id="team2Tab" class="tab-content">
+                <div id="team2-table-container">
+                    <p>Team 2 table will load here</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='/js/match_analysis.js') }}"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/match-analysis.css') }}">
+
+{% endblock %}

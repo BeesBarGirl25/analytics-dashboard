@@ -1,65 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Game Analytics Dashboard</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <!-- Top Task Bar -->
-    <div class="task-bar">
-        <h1>Game Analytics Dashboard</h1>
-        <div id="game-selector">
-            <label for="match-selection">Select a Game:</label>
-            <select id="match-selection">
-                {% for match in matches_with_teams %}
-                    <option value="{{ match.match_id }}">{{ match.teams }}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
+{% extends "base.html" %}
 
-    <!-- Main Content -->
-    <main>
-        <!-- Graph container -->
-        <div id="graph-div">
-            {{ default_graph_html|safe }}
-        </div>
-        
-        <!-- Tab Section with Content Area -->
-        <div class="tabs-section">
-            <!-- Tabs -->
-            <div class="tabs">
-                <button class="tab-link" onclick="openTab(event, 'Tab1')">Match Analysis</button>
-                <button class="tab-link" onclick="openTab(event, 'shared-content')">Tab 2</button>
-                <button class="tab-link" onclick="openTab(event, 'shared-content')">Tab 3</button>
-            </div>
+{% block title %}Home{% endblock %}
 
-            <div id="Tab1" class="tab-panel active">
-                <p>Content for Tab 1</p>
-            </div>
-            <div id="shared-content" class="tab-panel">
-                <div id="shared-content-placeholder">
-                    <!-- Collapsible Section for Squad -->
-                    <div class="collapsible-section">
-                        <div class="collapsible" id="squad-header">
-                            <span>Squad</span>
-                            <span class="arrow">&#x25BC;</span> <!-- Down arrow -->
-                        </div>
-                        <div class="collapsible-content" id="squad-section">
-                            <div id="team-categorized-container">
-                                <!-- Dynamically generated table will appear here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- External JS File -->
-    <script src="{{ url_for('static', filename='js/update_graph.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/switch_tab.js') }}"></script>
-    <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
-</body>
-</html>
+{% block content %}
+<h2>Homepage</h2>
+<p>This is the starting point for your app!</p>
+{% endblock %}

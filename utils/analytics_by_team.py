@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 import numpy as np
+from flask import current_app
 
 def squad_categorized(categories, team_data):
     """
@@ -22,11 +23,11 @@ def squad_categorized(categories, team_data):
     all_players = set()  # Set to track all player names globally
 
     # Filter out rows where 'tactics.lineup' is null
-    lineups = team_data[team_data['tactics.lineup'].notnull()]
+    lineups = team_data[team_data['tactics'] != -999]
     
     # Loop through all rows in 'lineups'
-    for lineup in lineups['tactics.lineup']:
-        for entry in lineup:  # Loop through each player's data in the lineup
+    for lineup in lineups['tactics']:
+        for entry in lineup['lineup']:  # Loop through each player's data in the lineup
             position = entry['position']['name']
             player_name = entry['player']['name']
             
@@ -44,7 +45,6 @@ def squad_categorized(categories, team_data):
     df = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in categorized.items()]))
     
     return df, unmatched_positions
-
 
 def calculate_team_metrics(data):
     """
