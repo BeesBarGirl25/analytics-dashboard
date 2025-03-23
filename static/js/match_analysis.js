@@ -3,20 +3,26 @@ const matchCache = {}; // Client-side cache for match data
 document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('DropdownPopulated', function (event) {
         const { competition_id, season_id } = event.detail;
-        console.log(`Received Competition ID: ${competition_id}, Season ID: ${season_id}`);
         populateMatchesDropdown(competition_id, season_id);
     });
 
     document.addEventListener('MatchDropdownPopulated', function (event) {
         const { match_id } = event.detail;
-        console.log(`Received Match ID: ${match_id}`);
 
-        // Fetch match data and pass it to other functions
         getMatchData(match_id)
             .then(data => {
-                console.log("Match data received:", data);
+                const uniqueTeams = [...new Set(data.map(item => item.team))];
 
-                // Example: Use match data for graph generation
+                if (uniqueTeams.length === 2) {
+                    // Update the tab button text dynamically
+                    const team1Button = document.querySelector('.tab-button:nth-child(2)'); // Team 1 button
+                    const team2Button = document.querySelector('.tab-button:nth-child(3)'); // Team 2 button
+
+                    team1Button.textContent = uniqueTeams[0]; // Update Team 1 button
+                    team2Button.textContent = uniqueTeams[1]; // Update Team 2 button
+                } else {
+                    console.error('Unexpected number of unique teams in match data.');
+                }
                 getMatchGraph(match_id);
             })
             .catch(error => {
@@ -106,7 +112,6 @@ function populateMatchesDropdown(competition_id, season_id) {
             matchDropdown.appendChild(matchesList);
         });
 
-        console.log('Matches dropdown populated successfully.');
     })
     .catch(error => {
         console.error('Error fetching matches:', error);
@@ -114,13 +119,10 @@ function populateMatchesDropdown(competition_id, season_id) {
     });
 }
 
-
-
 function getMatchData(match_id) {
     return new Promise((resolve, reject) => {
         // Check cache first
         if (matchCache[match_id]) {
-            console.log("Using cached match data:", matchCache[match_id]);
             resolve(matchCache[match_id]);
             return;
         }
@@ -166,6 +168,20 @@ function getMatchGraph(match_id) {
             console.error("Error fetching match graph:", error);
             graphContainer.innerHTML = '<p>Error loading match graph</p>';
         });
+}
+
+function showTab(tabId) {
+    // Get all tab-content elements and hide them
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.classList.remove('active'));
+
+    // Get all tab-button elements and deactivate them
+    const buttons = document.querySelectorAll('.tab-button');
+    buttons.forEach(button => button.classList.remove('active'));
+
+    // Activate the clicked tab and its corresponding button
+    document.getElementById(tabId).classList.add('active');
+    event.target.classList.add('active');
 }
 
 

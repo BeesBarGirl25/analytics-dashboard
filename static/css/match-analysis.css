@@ -8,23 +8,6 @@
     margin-right: 10px; /* Space between the label and the dropdown */
 }
 
-#match-graph-container {
-    width: 60%; /* Takes 60% of the screen width */
-    height: 80vh;
-    margin: 20px auto; /* Centers the div with a 20px top/bottom margin */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
-    background-color: #f4f4f4; /* Distinct light gray background color */
-    padding: 20px; /* Adds inner spacing for content */
-    box-sizing: border-box; /* Ensures padding is included in the width */
-    position: relative;
-    margin-left: 0;
-    margin-right: auto;
-    margin-left: 0;
-    margin-right: auto;
-}
-
-
 .selected-item {
     padding: 10px;
     font-size: 16px;
@@ -76,4 +59,76 @@
     background-color: #444;
     color: white;
 }
+
+.match-analysis-content {
+    display: flex; /* Flexbox layout */
+    justify-content: space-between; /* Add space between the two divs */
+    align-items: flex-start; /* Align divs at the top */
+    gap: 10px; /* Space between divs */
+    width: 100%; /* Adjust width to fit within the page */
+}
+
+#match-graph-container,
+#match-analysis-tables {
+    flex: 1; /* Allow each div to take equal space */
+    max-width: 49%; /* Limit each div to 48% of the container width */
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
+    background-color: #f4f4f4;
+    padding: 20px; /* Adds inner spacing */
+    box-sizing: border-box; /* Ensures padding is included in the width */
+    height: 80vh;
+    margin: 10px 10px 10px 10px; /* Centers the div with a 20px top/bottom margin */
+}
+
+.match-analysis-tabs {
+    display: flex; /* Flexbox layout */
+    justify-content: space-between; /* Distribute buttons equally */
+    align-items: stretch; /* Stretch buttons to fill the container height */
+    width: 100%; /* Ensure the tabs container spans the full width */
+    margin-bottom: 20px; /* Add spacing below the tabs */
+}
+
+.tab-button {
+    flex: 1; /* Make each button take up equal space */
+    text-align: center; /* Center the text inside the button */
+    padding: 10px 0; /* Adjust padding for consistent button height */
+    font-size: 16px; /* Match the rest of the site's font size */
+    font-weight: bold;
+    background-color: #00A86B; /* Match your site's color scheme */
+    border: none; /* Remove borders */
+    color: white; /* Text color */
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth color transition */
+}
+
+.tab-button:hover {
+    background-color: #00865A; /* Darker green on hover */
+}
+
+.tab-button.active {
+    background-color: #004C3F; /* Highlight the active tab */
+}
+
+/* Add rounded edges to the first and last buttons */
+.tab-button:first-child {
+    border-radius: 10px 0 0 10px; /* Round the left corners */
+}
+
+.tab-button:last-child {
+    border-radius: 0 10px 10px 0; /* Round the right corners */
+}
+
+.tab-button + .tab-button {
+    border-left: 1px solid #004C3F; /* Add a subtle divider between tabs */
+}
+
+.tab-content {
+    display: none; /* Hide all tab contents by default */
+}
+
+.tab-content.active {
+    display: block; /* Only display the active tab content */
+}
+
 

@@ -10,10 +10,30 @@
             </div>
         </div>
     </div>
-    <div id="match-graph-container">
-        <h3> Match Graphs will go here</h3>
+    <div class="match-analysis-content">
+        <div id="match-graph-container">
+            <h3> Match Graphs will go here</h3>
+        </div>
+        <div id="match-analysis-tables">
+            <div class="match-analysis-tabs">
+                <button class="tab-button active" onclick="showTab('matchTab')">Match</button>
+                <button class="tab-button" onclick="showTab('team1Tab')">Team 1</button>
+                <button class="tab-button" onclick="showTab('team2Tab')">Team 2</button>
+            </div>
+
+            <div id="matchTab" class="tab-content active">
+                <h3>Match Content</h3>
+            </div>
+            <div id="team1Tab" class="tab-content">
+                <h3>Team 1 Content</h3>
+            </div>
+            <div id="team2Tab" class="tab-content">
+                <h3>Team 2 Content</h3>
+            </div>
+        </div>
     </div>
-    <script src="{{ url_for('static', filename='/js/matches_dropdown.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='/js/match_analysis.js') }}"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/match-analysis.css') }}">
 

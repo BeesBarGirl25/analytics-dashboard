@@ -39,7 +39,6 @@ function populateDropdown() {
                         selectedItem.textContent = display_key; // Update the selected item text
                         dropdownList.style.display = 'none'; // Collapse the dropdown
 
-                        console.log(`Selected: Competition ID ${competition_id}, Season ID ${season_id}`);
 
                         // Dispatch a custom event
                         const event = new CustomEvent('DropdownPopulated', {
