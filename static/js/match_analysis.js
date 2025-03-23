@@ -7,30 +7,46 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.addEventListener('MatchDropdownPopulated', function (event) {
-        const { match_id } = event.detail;
+    const { match_id } = event.detail;
 
-        getMatchData(match_id)
-            .then(data => {
-                const uniqueTeams = [...new Set(data.map(item => item.team))];
+    getMatchData(match_id)
+        .then(data => {
+            // Dynamically update tab labels
+            const uniqueTeams = [...new Set(data.map(item => item.team))];
+            if (uniqueTeams.length === 2) {
+                document.querySelector('.tab-button:nth-child(2)').textContent = uniqueTeams[0];
+                document.querySelector('.tab-button:nth-child(3)').textContent = uniqueTeams[1];
+            }
 
-                if (uniqueTeams.length === 2) {
-                    // Update the tab button text dynamically
-                    const team1Button = document.querySelector('.tab-button:nth-child(2)'); // Team 1 button
-                    const team2Button = document.querySelector('.tab-button:nth-child(3)'); // Team 2 button
+            if (uniqueTeams.length === 2) {
+                loadSquadForTab(uniqueTeams[0], match_id, "team1-table-container");
+                loadSquadForTab(uniqueTeams[1], match_id, "team2-table-container");
+            }
 
-                    team1Button.textContent = uniqueTeams[0]; // Update Team 1 button
-                    team2Button.textContent = uniqueTeams[1]; // Update Team 2 button
-                } else {
-                    console.error('Unexpected number of unique teams in match data.');
+            // Cache match data
+            matchCache[match_id] = data;
+            getMatchGraph(match_id);
+
+            // Render content for the currently active tab
+            const activeTab = document.querySelector('.tab-button.active');
+            if (activeTab) {
+                const tabId = activeTab.getAttribute('onclick').match(/showTab\('(.*?)'\)/)[1];
+                const teamName = activeTab.textContent;
+
+                // Call the squad table rendering logic for the active tab
+                if (tabId === "team1Tab" || tabId === "team2Tab") {
+                    loadSquadForTab(
+                        teamName,
+                        match_id,
+                        tabId === "team1Tab" ? "team1-table-container" : "team2-table-container"
+                    );
                 }
-                getMatchGraph(match_id);
-            })
-            .catch(error => {
-                console.error("Error fetching match data:", error);
-            });
-    });
+            }
+        })
+        .catch(error => console.error("Error fetching match data:", error));
 });
 
+});
 
 function populateMatchesDropdown(competition_id, season_id) {
     const matchDropdown = document.getElementById('matchDropdown'); // Matches dropdown container
@@ -171,18 +187,94 @@ function getMatchGraph(match_id) {
 }
 
 function showTab(tabId) {
-    // Get all tab-content elements and hide them
     const tabs = document.querySelectorAll('.tab-content');
     tabs.forEach(tab => tab.classList.remove('active'));
 
-    // Get all tab-button elements and deactivate them
     const buttons = document.querySelectorAll('.tab-button');
     buttons.forEach(button => button.classList.remove('active'));
 
-    // Activate the clicked tab and its corresponding button
     document.getElementById(tabId).classList.add('active');
     event.target.classList.add('active');
+
+    const matchId = getCurrentMatchId(); // Retrieve the current match ID
+
+    if (tabId === "team1Tab" || tabId === "team2Tab") {
+        const teamName = document.querySelector(
+            tabId === "team1Tab" ? '.tab-button:nth-child(2)' : '.tab-button:nth-child(3)'
+        ).textContent;
+
+        loadSquadForTab(
+            teamName,
+            matchId,
+            tabId === "team1Tab" ? "team1-table-container" : "team2-table-container"
+        );
+    }
 }
+
+function filterMatchDataByTeam(teamName, matchId) {
+    const matchData = matchCache[matchId]; // Retrieve the cached match data
+
+    if (!matchData) {
+        console.error("Match data not found in cache.");
+        return [];
+    }
+
+    // Filter match data by the specified team name
+    return matchData.filter(item => item.team === teamName);
+}
+
+function createDynamicTableHTML(data) {
+    if (data.length === 0) {
+        return '<p>No data available.</p>';
+    }
+
+    const columns = Object.keys(data[0]);
+    let tableHTML = '<table class="squad-table"><thead><tr>';
+
+    // Create header row
+    columns.forEach(column => {
+        tableHTML += `<th>${column}</th>`;
+    });
+
+    tableHTML += '</tr></thead><tbody>';
+
+    // Create data rows
+    data.forEach(row => {
+        tableHTML += '<tr>';
+        columns.forEach(column => {
+            const cellData = row[column] || "No Data"; // Replace NaN or empty values
+            tableHTML += `<td>${cellData}</td>`;
+        });
+        tableHTML += '</tr>';
+    });
+
+    tableHTML += '</tbody></table>';
+    return tableHTML;
+}
+
+
+function loadSquadForTab(teamName, matchId, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '<p>Loading...</p>'; // Display a loading message
+
+    fetch('/fetch_team_squad', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ match_id: matchId, team_name: teamName })
+    })
+        .then(response => response.json())
+        .then(data => {
+            container.innerHTML = data.html; // Populate the table with the returned HTML
+        })
+        .catch(error => {
+            console.error("Error loading squad data:", error);
+            container.innerHTML = '<p>Error loading data.</p>';
+        });
+}
+
+
+
+
 
 
 

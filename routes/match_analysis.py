@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, request, jsonify, current_app
 from statsbombpy import sb
 from utils.plotting_functions import generate_match_graph
+from utils.analytics_by_team import squad_categorized
+from utils.references_and_lookups import categories
 import pandas as pd
 
 # Define blueprint
@@ -103,4 +105,28 @@ def fetch_match_graph():
         return jsonify({"error": "Invalid match_id"}), 400
     except Exception as e:
         print(f"Error in fetch_match_graph: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+
+@match_analysis_bp.route('/fetch_team_squad', methods=['POST'])
+def fetch_team_squad():
+    try:
+        data = request.get_json()
+        match_id = int(data.get('match_id'))
+        team_name = data.get('team_name')
+
+        if match_id not in match_data_cache:
+            return jsonify({"error": "Match data not found. Fetch it first with /fetch_match"}), 400
+
+        match_data = pd.DataFrame(match_data_cache[match_id])
+        team_data = match_data[match_data['team'] == team_name]
+
+        df, unmatched_positions = squad_categorized(categories, team_data)
+
+        # Convert the DataFrame to HTML and return it
+        return jsonify({"html": df.to_html(index=False, classes="squad-table")}), 200
+
+    except ValueError:
+        return jsonify({"error": "Invalid match_id or team_name"}), 400
+    except Exception as e:
+        print(f"Error in fetch_team_squad: {e}")
         return jsonify({"error": "Internal Server Error"}), 500
