@@ -1,42 +1,103 @@
+/* Reset and body styling */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    height: 100%;
 }
 
+/* Header styling */
 header {
-    background-color: #141414; /* Primary header background */
+    background-color: #333; /* Primary header background */
     color: white;
     padding: 10px 20px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Align items vertically */
+    position: relative; /* Enable positioning for dropdown */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 header h1 {
     margin: 0;
     font-size: 1.8rem;
+    flex-grow: 1; /* Allow the title to take up space equally */
+    text-align: center; /* Center-align the title text */
 }
 
 nav {
+    position: absolute;
+    right: 20px; /* Position the dropdown on the right side */
     display: flex;
     gap: 10px;
 }
 
-.nav-tab {
-    text-decoration: none;
-    font-size: 1rem;
-    padding: 8px 16px;
-    background-color: #7fb3f1; /* Light shade of blue */
-    color: white;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease, color 0.3s ease;
+
+select {
+    padding: 8px 12px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
-.nav-tab:hover, .nav-tab.active {
-    background-color: #4a90e2; /* Darker shade of blue */
+/* Sidebar styles */
+.sidebar {
+    height: 100%;
+    width: 0; /* Start collapsed */
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #333;
+    overflow-x: hidden;
+    transition: 0.3s;
+    padding-top: 60px; /* Below the header */
+}
+
+.sidebar a {
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 18px;
     color: white;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #00A86B;
+}
+
+.sidebar a.active{
+    background-color: #00A86B;
+    color: white;
+    font-weight: bold;
+}
+
+/* Arrow styles */
+.arrow {
+    position: fixed;
+    top: 15px; /* Align arrow with header's top padding */
+    left: 0;
+    transform: rotate(180deg); /* Default arrow direction */
+    font-size: 20px;
+    background-color: #333; /* Match header color */
+    color: white;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 0 5px 5px 0;
+    transition: transform 0.3s, left 0.3s;
+    z-index: 1000; /* Ensure arrow is above other elements */
+}
+
+.arrow.open {
+    transform: rotate(0); /* Rotate arrow on sidebar open */
+    left: 250px; /* Align with expanded sidebar */
+}
+
+/* Main content */
+.main-content {
+    margin-left: 0; /* Reset for hidden sidebar */
+    transition: margin-left 0.3s;
+    padding: 20px;
 }

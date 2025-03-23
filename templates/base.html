@@ -3,29 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Analytics Dashboard{% endblock %}</title>
-    <link rel="stylesheet" href="/static/css/base.css">
-    <style>
-        /* Internal CSS for Navbar Styles */
-
-    </style>
+    <title>Football Analytics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/base.css') }}"> <!-- CSS -->
+    <script src="{{ url_for('static', filename='/js/navbar.js') }}" defer></script> <!-- JS -->
 </head>
 <body>
-<header>
-    <h1>Analytics Dashboard</h1>
-    <nav>
-        <a href="#" class="nav-tab">Competition</a>
-        <a href="#" class="nav-tab">Team</a>
-        <a href="#" class="nav-tab">Country</a>
-        <a href="#" class="nav-tab">Match</a>
-        <a href="#" class="nav-tab">Player</a>
-    </nav>
-</header>
-<main>
-    {% block content %}{% endblock %}
-</main>
-<footer>
-    <p>&copy; 2025 Analytics Dashboard</p>
-</footer>
+    <!-- Header -->
+    <header>
+        <h1>Football Analytics</h1>
+        <nav>
+            <select id="dropdown">
+                <option disabled selected>1. Bundesliga (2023/2024)</option>
+            </select>
+        </nav>
+    </header>
+
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <a href="{{ url_for('match_analysis.match_analysis') }}" class="{% if active_page == 'match_analysis' %}active{% endif %}">Match Analysis</a>
+    </div>
+    <div id="toggleArrow" class="arrow" onclick="toggleSidebar()">&#9654;</div>
+
+    <!-- Main content -->
+    <div id="main" class="main-content">
+        {% block content %}
+        <!-- Each page will override this block -->
+        {% endblock %}
+    </div>
 </body>
 </html>

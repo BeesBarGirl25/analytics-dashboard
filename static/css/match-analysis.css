@@ -1,0 +1,26 @@
+.match-analysis-header {
+    display: flex;
+    align-items: center; /* Align items vertically in the center */
+    gap: 20px; /* Add some space between the title and the dropdown */
+}
+
+.match-analysis-header label {
+    margin-right: 10px; /* Space between the label and the dropdown */
+}
+
+#match-graph-container {
+    width: 60%; /* Takes 60% of the screen width */
+    height: 80vh;
+    margin: 20px auto; /* Centers the div with a 20px top/bottom margin */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow effect */
+    background-color: #f4f4f4; /* Distinct light gray background color */
+    padding: 20px; /* Adds inner spacing for content */
+    box-sizing: border-box; /* Ensures padding is included in the width */
+    position: relative;
+    margin-left: 0;
+    margin-right: auto;
+    margin-left: 0;
+    margin-right: auto;
+}
+
