@@ -56,7 +56,6 @@ def generate_match_graph(match_data):
         name=f'{team_2_name} Goals',
         line=dict(color='blue')
     ))
-    current_app.logger.debug(f"Periods: ${match_data['period'].value_counts()}")
 
     unique_periods = match_data['period'].unique()
 
