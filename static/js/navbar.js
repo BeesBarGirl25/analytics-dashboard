@@ -2,36 +2,72 @@ function populateDropdown() {
     fetch('/api/get_competitions')
         .then(response => response.json())
         .then(data => {
-            const dropdown = document.getElementById('dropdown');
-            dropdown.innerHTML = ''; // Clear previous options
+            const dropdownList = document.getElementById('dropdownList');
+            const selectedItem = document.getElementById('selectedItem');
+            dropdownList.innerHTML = ''; // Clear previous options
 
-            data.forEach(option => {
-                const opt = document.createElement('option');
-                opt.value = `${option.competition_id}-${option.season_id}`; // Add competition_id and season_id
-                opt.textContent = option.display_key; // Add display key
-                dropdown.appendChild(opt);
-            });
-            const defaultOption = dropdown.options[dropdown.selectedIndex];
-            const event = new CustomEvent('DropdownPopulated', {
-                detail: {
-                    competition_id: defaultOption.value.split('-')[0],
-                    season_id: defaultOption.value.split('-')[1],
+            // Group data by competition_name
+            const groupedData = data.reduce((groups, item) => {
+                const { competition_name, competition_id, season_id, display_key } = item;
+                if (!groups[competition_name]) {
+                    groups[competition_name] = [];
                 }
-            });
-            document.dispatchEvent(event);
+                groups[competition_name].push({ competition_id, season_id, display_key });
+                return groups;
+            }, {});
 
-            dropdown.addEventListener('change', function () {
-                const selectedOption = dropdown.options[dropdown.selectedIndex];
-                console.log('Dropdown selection changed:', selectedOption.value);
+            // Populate the dropdown list
+            Object.entries(groupedData).forEach(([competitionName, seasons]) => {
+                // Create competition div
+                const competitionDiv = document.createElement('div');
+                competitionDiv.className = 'competition';
+                competitionDiv.textContent = competitionName;
 
-                const competition_id = selectedOption.value.split('-')[0];
-                const season_id = selectedOption.value.split('-')[1];
+                // Create season list (nested)
+                const seasonList = document.createElement('div');
+                seasonList.className = 'season-list';
 
-                // Dispatch the custom event with the new selection details
-                const event = new CustomEvent('DropdownPopulated', {
-                    detail: { competition_id, season_id }
+                seasons.forEach(({ competition_id, season_id, display_key }) => {
+                    const seasonDiv = document.createElement('div');
+                    seasonDiv.className = 'season';
+                    seasonDiv.textContent = display_key;
+                    seasonDiv.dataset.competitionId = competition_id;
+                    seasonDiv.dataset.seasonId = season_id;
+
+                    // Handle season selection
+                    seasonDiv.addEventListener('click', function () {
+                        selectedItem.textContent = display_key; // Update the selected item text
+                        dropdownList.style.display = 'none'; // Collapse the dropdown
+
+                        console.log(`Selected: Competition ID ${competition_id}, Season ID ${season_id}`);
+
+                        // Dispatch a custom event
+                        const event = new CustomEvent('DropdownPopulated', {
+                            detail: {
+                                competition_id: seasonDiv.dataset.competitionId,
+                                season_id: seasonDiv.dataset.seasonId,
+                            },
+                        });
+                        document.dispatchEvent(event);
+                    });
+
+                    seasonList.appendChild(seasonDiv);
                 });
-                document.dispatchEvent(event);
+
+                // Toggle season list visibility on competition click
+                competitionDiv.addEventListener('click', function () {
+                    const isVisible = seasonList.style.display === 'block';
+                    seasonList.style.display = isVisible ? 'none' : 'block'; // Toggle visibility
+                });
+
+                dropdownList.appendChild(competitionDiv);
+                dropdownList.appendChild(seasonList);
+            });
+
+            // Expand/collapse dropdown when the selected item is clicked
+            selectedItem.addEventListener('click', function () {
+                const isVisible = dropdownList.style.display === 'block';
+                dropdownList.style.display = isVisible ? 'none' : 'block';
             });
         })
         .catch(error => {
@@ -39,9 +75,10 @@ function populateDropdown() {
         });
 }
 
-
 // Initialize dropdown population on page load
 document.addEventListener('DOMContentLoaded', populateDropdown);
+
+
 
 
 function toggleSidebar() {

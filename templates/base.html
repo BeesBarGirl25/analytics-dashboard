@@ -12,10 +12,15 @@
     <header>
         <h1>Football Analytics</h1>
         <nav>
-            <select id="dropdown">
-                <option disabled selected>1. Bundesliga (2023/2024)</option>
-            </select>
+            <div id="competitionMenu" class="custom-dropdown">
+                <div class="selected-item" id="selectedItem">Select a Competition</div>
+                <div class="dropdown-list" id="dropdownList">
+                    <!-- Dynamic competitions and seasons will be added here -->
+                </div>
+            </div>
         </nav>
+
+
     </header>
 
     <!-- Sidebar -->
