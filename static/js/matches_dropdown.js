@@ -1,109 +1,130 @@
+const matchCache = {}; // Client-side cache for match data
+
 document.addEventListener('DOMContentLoaded', function () {
-    // Listen for the custom event dispatched by the top dropdown
     document.addEventListener('DropdownPopulated', function (event) {
-        const { competition_id, season_id } = event.detail; // Extract the competition_id and season_id
+        const { competition_id, season_id } = event.detail;
         console.log(`Received Competition ID: ${competition_id}, Season ID: ${season_id}`);
-        populateMatchesDropdown(competition_id, season_id); // Populate match dropdown
+        populateMatchesDropdown(competition_id, season_id);
     });
 
-    // Listen for the custom event dispatched by the match dropdown
     document.addEventListener('MatchDropdownPopulated', function (event) {
-        const { match_id } = event.detail; // Extract the match_id
+        const { match_id } = event.detail;
         console.log(`Received Match ID: ${match_id}`);
 
-        // Trigger both match data and graph fetching
-        getMatchData(match_id);
-        getMatchGraph(match_id);
+        // Fetch match data and pass it to other functions
+        getMatchData(match_id)
+            .then(data => {
+                console.log("Match data received:", data);
+
+                // Example: Use match data for graph generation
+                getMatchGraph(match_id);
+            })
+            .catch(error => {
+                console.error("Error fetching match data:", error);
+            });
     });
 });
+
 
 function populateMatchesDropdown(competition_id, season_id) {
     // Fetch matches from the backend
     fetch('/fetch_matches', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ competition_id, season_id }), // Send both values to the server
-    })
-        .then(response => response.json())
-        .then(data => {
-            // Populate the match dropdown
-            const matchDropdown = document.getElementById('matchDropdown');
-            matchDropdown.innerHTML = ''; // Clear any existing options
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ competition_id, season_id }),
+})
+    .then(response => response.json())
+    .then(data => {
+        const matchDropdown = document.getElementById('matchDropdown');
+        const selectedItemMatches = document.getElementById('selectedItemMatches');
+        matchDropdown.innerHTML = ''; // Clear existing options
 
-            data.forEach(match => {
-                const opt = document.createElement('option');
-                opt.value = match.value; // Use match_id as value
-                opt.textContent = match.text; // Use "Team A vs Team B" as text
-                matchDropdown.appendChild(opt);
-            });
-
-            // Attach change event listener to the dropdown after populating options
-            matchDropdown.addEventListener('change', function () {
-                const selectedOption = matchDropdown.options[matchDropdown.selectedIndex];
-                const match_id = selectedOption.value;
-                console.log('Match dropdown changed, fetching graph for match_id:', match_id);
-
-                // Dispatch the event and trigger data and graph fetching
-                const event = new CustomEvent('MatchDropdownPopulated', {
-                    detail: { match_id }
-                });
-                document.dispatchEvent(event);
-            });
-
-            // Trigger fetching for the default selected match
-            const defaultOption = matchDropdown.options[matchDropdown.selectedIndex];
-            if (defaultOption) {
-                const match_id = defaultOption.value;
-                console.log('Fetching graph for default match_id:', match_id);
-
-                // Dispatch the event and trigger data and graph fetching
-                const event = new CustomEvent('MatchDropdownPopulated', {
-                    detail: { match_id }
-                });
-                document.dispatchEvent(event);
-            } else {
-                console.error('No default option selected in matchDropdown');
+        const groupedData = data.reduce((groups, item) => {
+            const { competition_stage, value, text } = item;
+            if (!groups[competition_stage]) {
+                groups[competition_stage] = [];
             }
-        })
-        .catch(error => {
-            console.error('Error fetching matches:', error);
-            const matchDropdown = document.getElementById('matchDropdown');
-            matchDropdown.innerHTML = '<option disabled>Error loading matches</option>';
+            groups[competition_stage].push({ value, text });
+            return groups;
+        }, {});
+
+        Object.entries(groupedData).forEach(([competitionStage, matches]) => {
+            const competitionStageDiv = document.createElement('div');
+            competitionStageDiv.className = 'stage';
+            competitionStageDiv.textContent = competitionStage;
+
+            const matchesList = document.createElement('div');
+            matchesList.className = 'matches-list';
+
+            matches.forEach(({ value, text }) => {
+                const matchDiv = document.createElement('div');
+                matchDiv.className = 'match';
+                matchDiv.textContent = text;
+                matchDiv.dataset.value = value; // Use `dataset` for custom attributes
+
+                matchDiv.addEventListener('click', function () {
+                    selectedItemMatches.textContent = text;
+                    matchDropdown.style.display = 'none'; // Collapse dropdown
+                    console.log(`Selected: Match ID ${value}`);
+                    const event = new CustomEvent('MatchDropdownPopulated', {
+                        detail: { match_id: value },
+                    });
+                    document.dispatchEvent(event);
+                });
+
+                matchesList.appendChild(matchDiv);
+            });
+
+            competitionStageDiv.addEventListener('click', function () {
+                const isVisible = matchesList.style.display === 'block';
+                matchesList.style.display = isVisible ? 'none' : 'block';
+            });
+
+            matchDropdown.appendChild(competitionStageDiv);
+            matchDropdown.appendChild(matchesList);
         });
+
+        selectedItemMatches.addEventListener('click', function () {
+            const isVisible = matchDropdown.style.display === 'block';
+            matchDropdown.style.display = isVisible ? 'none' : 'block';
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching matches:', error);
+    });
 }
 
 function getMatchData(match_id) {
-    // Fetch match data from the backend
-    console.log('Match ID being sent:', match_id);
-    match_id = parseInt(match_id);
-    fetch('/fetch_match', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ match_id }), // Send match_id to the server
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Received match data:', data);
+    return new Promise((resolve, reject) => {
+        // Check cache first
+        if (matchCache[match_id]) {
+            console.log("Using cached match data:", matchCache[match_id]);
+            resolve(matchCache[match_id]);
+            return;
+        }
 
-            // Handle the match data (further processing or UI updates can be added here)
+        // Fetch from /fetch_match endpoint
+        fetch('/fetch_match', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ match_id }),
         })
-        .catch(error => {
-            console.error('Error fetching match data:', error);
-        });
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                matchCache[match_id] = data; // Cache data
+                resolve(data);
+            })
+            .catch(reject);
+    });
 }
 
 function getMatchGraph(match_id) {
     const graphContainer = document.getElementById('match-graph-container');
-
-    // Measure the dimensions of the container
     const containerWidth = graphContainer.clientWidth;
     const containerHeight = graphContainer.clientHeight;
-
-    console.log('Container dimensions:', containerWidth, containerHeight);
 
     fetch('/fetch_match_graph', {
         method: 'POST',
@@ -114,16 +135,16 @@ function getMatchGraph(match_id) {
         .then(data => {
             graphContainer.innerHTML = data.graph_div;
 
-            // Execute any embedded Plotly scripts
             const scripts = graphContainer.getElementsByTagName('script');
             for (let i = 0; i < scripts.length; i++) {
                 new Function(scripts[i].innerHTML)();
             }
         })
         .catch(error => {
-            console.error('Error fetching match graph:', error);
+            console.error("Error fetching match graph:", error);
             graphContainer.innerHTML = '<p>Error loading match graph</p>';
         });
 }
+
 
 

@@ -3,10 +3,12 @@
 {% block content %}
     <div class="match-analysis-header">
         <h2>Match Analysis</h2>
-        <label for="matchDropdown">Select a Match:</label>
-        <select id="matchDropdown">
-            <option disabled selected>Loading matches...</option>
-        </select>
+        <div id="matchMenu" class="custom-dropdown">
+            <div class="selected-item" id="selectedItemMatches">Select a Match</div>
+            <div class="dropdown-list" id="matchDropdown">
+                <!-- Dynamic competitions and seasons will be added here -->
+            </div>
+        </div>
     </div>
     <div id="match-graph-container">
         <h3> Match Graphs will go here</h3>
