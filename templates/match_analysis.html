@@ -21,7 +21,81 @@
                 <button class="tab-button" onclick="showTab('team2Tab')">Team 2</button>
             </div>
             <div id="matchTab" class="tab-content active">
-                <p>Match-level data will go here</p>
+                <table id="scorelineTable">
+                    <!-- Table Header: Team Names and Scoreline -->
+                    <thead>
+                        <tr>
+                            <th class="homeTeamName">Brentford</th>
+                            <th class="matchScore">3 - 0</th>
+                            <th class="awayTeamName">Fulham</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Row 1: Scorers -->
+                        <tr>
+                            <td class="team homeTeam">
+                                <div class="scorers"> 7' Ivan Toney ⚽, 23' Bryan Mbeumo ⚽, 45+1' Yoane Wissa ⚽</div>
+                            </td>
+                            <td class="divider">
+                                <div class="referee"><strong>Referee:</strong> Mike Dean</div>
+                            </td>
+                            <td class="team awayTeam">
+                                <div class="scorers">-</div>
+                            </td>
+                        </tr>
+                        <!-- Row 2: Assists -->
+                        <tr>
+                            <td class="team homeTeam">
+                                <div class="assists">7' Mikel Damsgaard 👟, 23' Yoane Wissa 👟, 45+1' Bryan Mbuemo 👟</div>
+                            </td>
+                            <td class="divider"></td>
+                            <td class="team awayTeam">
+                                <div class="assists">-</div>
+                            </td>
+                        </tr>
+                        <!-- Row 3: Manager -->
+                        <tr>
+                            <td class="team homeTeam">
+                                <div class="manager">Thomas Frank</div>
+                            </td>
+                            <td class="divider"></td>
+                            <td class="team awayTeam">
+                                <div class="manager">Scott Parker</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table id="matchOverviewTable">
+                    <thead>
+                        <tr>
+                            <th class="homeTeamName">Home Team</th>
+                            <th class="statsValues">Stats</th>
+                            <th class="awayTeamName">Away Team</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Row 1: Shots -->
+                        <tr>
+                            <td id="homeTeamShots">12</td>
+                            <td class="statsHeader">Shots</td>
+                            <td id="awayTeamShots">2</td>
+                        </tr>
+                        <!-- Row 2: Passes Attempted -->
+                        <tr>
+                            <td id="homeTeamPassesAttempted">75</td>
+                            <td class="statsHeader">Passes Attempted</td>
+                            <td id="awayTeamPassesAttempted">63</td>
+                        </tr>
+                        <!-- Row 3: Passes Completed -->
+                        <tr>
+                            <td id="homeTeamPassesCompleted">73</td>
+                            <td class="statsHeader">Passes Completed</td>
+                            <td id="awayTeamPassesCompleted">48</td>
+                        </tr>
+                    </tbody>
+                </table>
+
             </div>
             <div id="team1Tab" class="tab-content">
                 <div id="team1-table-container">
@@ -33,12 +107,11 @@
                     <p>Team 2 table will load here</p>
                 </div>
             </div>
-
         </div>
     </div>
 
     <script src="{{ url_for('static', filename='/js/match_analysis.js') }}"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/match-analysis.css') }}">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/match_summary.css') }}">
 {% endblock %}

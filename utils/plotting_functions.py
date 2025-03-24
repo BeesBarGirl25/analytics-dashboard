@@ -1,5 +1,5 @@
 import plotly.graph_objects as go
-from utils.match_analysis_utils import cumulative_stats
+from utils.analytics_by_team import cumulative_stats
 from flask import current_app
 
 def generate_match_graph(match_data):

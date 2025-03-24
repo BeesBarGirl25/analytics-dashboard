@@ -1,0 +1,87 @@
+/* General Table Styling */
+table {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto; /* Center the table horizontally */
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Subtle shadow */
+    border-collapse: separate; /* Needed for `border-radius` to work */
+    border-spacing: 0; /* Ensure there’s no gap between table borders */
+    border: 1px solid #ccc; /* Add a border around the table */
+    border-radius: 10px; /* Adjust this value for rounding the corners */
+    overflow: hidden; /* Ensures content fits inside rounded corners */
+
+}
+
+/* Header Styling */
+thead th {
+    background-color: #00865A; /* Example primary color */
+    color: white;
+    padding: 10px;
+    font-size: 24px;
+    width: 30%;
+}
+
+/* Data Rows Styling */
+tbody td {
+    padding: 10px;
+    vertical-align: top; /* Align content to the top */
+    border: 1px solid #ccc;
+}
+
+/* Home and Away Team Content */
+.team div {
+    margin: 5px 0;
+    font-size: 14px;
+    font-size: 10px;
+}
+
+/* Divider Styling */
+.divider {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.divider div{
+    font-size: 10px;
+    text-align: center;
+}
+
+/* Row Hover Effects */
+tbody tr:hover {
+    background-color: #e6f2ff; /* Light blue hover effect */
+}
+
+
+.homeTeam {
+    text-align: right;
+}
+
+.homeTeamName {
+    text-align: right;
+}
+
+.awayTeam {
+    text-align: left;
+}
+
+.awayTeamName {
+    text-align: left;
+}
+
+.divider h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.scorers, .assists, .manager {
+    font-size: 12px;
+    margin: 5px 0;
+}
+
+.statsHeader {
+    font-weight: bold;
+    font-size: 16px;
+}

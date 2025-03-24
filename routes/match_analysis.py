@@ -10,6 +10,7 @@ match_analysis_bp = Blueprint('match_analysis', __name__)
 
 # Global cache to store match data (temporary for the example)
 match_data_cache = {}
+matches_cache={}
 
 # Route for main match analysis page
 @match_analysis_bp.route('/')
@@ -31,16 +32,8 @@ def fetch_matches():
         season_id = int(season_id)
 
         matches = sb.matches(competition_id, season_id)
-        match_data = matches[['match_id', 'home_team', 'away_team', 'competition_stage']]
-        options = [
-            {
-                "competition_stage": row['competition_stage'],
-                "value": row['match_id'],
-                "text": f"{row['home_team']} vs {row['away_team']}"
-            }
-            for _, row in match_data.iterrows()
-        ]
-        return jsonify(options), 200
+        matches_dict = matches.to_dict(orient='records')
+        return jsonify(matches_dict), 200
 
     except ValueError:
         return jsonify({"error": "Invalid competition_id or season_id"}), 400

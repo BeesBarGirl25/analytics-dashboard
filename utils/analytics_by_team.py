@@ -46,43 +46,6 @@ def squad_categorized(categories, team_data):
     
     return df, unmatched_positions
 
-def calculate_team_metrics(data):
-    """
-    calculate_team_metrics(data)
-    
-    Calculates cumulative expected goals (xG) and total goals for a team based on shot data.
-    
-    Parameters:
-        data (pd.DataFrame): A pandas DataFrame containing match event data. Expected columns include:
-            - 'type.name' (str): Indicates the type of event (e.g., 'Shot').
-            - 'shot.statsbomb_xg' (float): Expected goals (xG) values for each shot.
-            - 'shot.outcome.name' (str): Outcome of the shot (e.g., 'Goal').
-            - 'timestamp', 'adjusted_timestamp', 'minutes', 'period' (various types): Other match-related data columns.
-    
-    Returns:
-        pd.DataFrame: A pandas DataFrame filtered and modified to include the following:
-            - Only rows where 'type.name' is 'Shot'.
-            - Fills missing values in 'shot.statsbomb_xg' with 0.
-            - Adds 'cum_xg', a column representing the cumulative sum of xG values.
-            - Adds 'goal_total', a column representing the cumulative count of goals based on the outcome of the shot.
-            - Forwards fills and replaces any remaining NaN values in 'cum_xg' and 'goal_total' with 0.
-            - Returns the following selected columns:
-                ['team.name', 'type.name', 'shot.statsbomb_xg', 'timestamp',
-                 'adjusted_timestamp', 'minutes', 'period', 'shot.outcome.name'].
-    """
-    data = data.copy()
-    data = data[data['type.name'] == 'Shot']
-    data['shot.statsbomb_xg'] = data['shot.statsbomb_xg'].fillna(0)
-    data["cum_xg"] = data['shot.statsbomb_xg'].cumsum()
-    data["goal_total"] = (
-        ((data['shot.outcome.name'] == 'Goal')).astype(int).cumsum()
-    )
-    data["cum_xg"] = data["cum_xg"].ffill()  # Forward fill
-    data["cum_xg"] = data["cum_xg"].fillna(0)  # Fill remaining NaNs with 0
-    data["goal_total"] = data["goal_total"].ffill()  # Forward fill
-    data["goal_total"] = data["goal_total"].fillna(0)  # Fill remaining NaNs with 0
-    return data[['team.name', 'type.name', 'shot.statsbomb_xg', 'timestamp', 'adjusted_timestamp', 'minutes', 'period', 'shot.outcome.name', 'cum_xg', 'goal_total']]
-
 def substitutions_summary(data):
     """
     calculate_team_metrics(data)
@@ -133,3 +96,13 @@ def generate_team_summary_data(data):
     summary_data.loc[len(summary_data)] = ['Passes Attempted', data['type.name'].where(data['type.name']=='Pass').count()]
     summary_data.loc[len(summary_data)] = ['Passes Completed', data['type.name'].where(data['type.name']=='Ball Receipt*').count()]
     return summary_data
+
+def cumulative_stats(team_data):
+    team_data['goals']=team_data['shot_outcome'].apply(lambda x: 1 if x == 'Goal' else 0)
+    team_data.replace(-999, 0, inplace=True)
+    team_data=team_data.sort_values('minute')
+    team_data['cum_goals']=0
+    team_data['cum_xg']=0
+    team_data['cum_goals']=team_data['goals'].cumsum()
+    team_data['cum_xg']=team_data['shot_statsbomb_xg'].cumsum()
+    return team_data

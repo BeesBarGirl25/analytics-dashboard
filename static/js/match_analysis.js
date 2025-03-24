@@ -1,4 +1,5 @@
 const matchCache = {}; // Client-side cache for match data
+const matchesCache = {};
 
 document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('DropdownPopulated', function (event) {
@@ -75,16 +76,33 @@ function populateMatchesDropdown(competition_id, season_id) {
         // Clear the loading message
         matchDropdown.innerHTML = '';
 
+        data.forEach(match => {
+            const {match_id, ...matchData } = match;
+            matchesCache[match_id] = matchData;
+        })
+
+        console.log('Matches Cache: ', matchesCache)
+
+        parsedData = data.map(row => ({
+            competitionStage: row.competition_stage,
+            value: row.match_id,
+            text: `${row.home_team} vs ${row.away_team}`
+        }))
+
+
+
         // Organize data by competition stages
-        const groupedData = data.reduce((groups, item) => {
-            const { competition_stage, value, text } = item;
-            if (!groups[competition_stage]) {
-                groups[competition_stage] = [];
+        const groupedData = parsedData.reduce((groups, item) => {
+            const { competitionStage, value, text } = item;
+            if (!groups[competitionStage]) {
+                groups[competitionStage] = [];
             }
-            groups[competition_stage].push({ value, text });
+            groups[competitionStage].push({ value, text });
             return groups;
         }, {});
 
+
+        console.log('groupedData: ', groupedData)
         // Populate the matches dropdown
         Object.entries(groupedData).forEach(([competitionStage, matches]) => {
             // Create a stage header
