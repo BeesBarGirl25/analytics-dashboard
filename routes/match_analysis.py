@@ -3,7 +3,9 @@ from statsbombpy import sb
 from utils.plotting_functions import generate_match_graph
 from utils.analytics_by_team import squad_categorized
 from utils.references_and_lookups import categories
+from utils.match_analysis_utils import match_overview_results
 import pandas as pd
+import numpy as np
 
 # Define blueprint
 match_analysis_bp = Blueprint('match_analysis', __name__)
@@ -32,6 +34,9 @@ def fetch_matches():
         season_id = int(season_id)
 
         matches = sb.matches(competition_id, season_id)
+        for index, row in matches.iterrows():
+            matches_cache[row['match_id']]=row.to_dict()
+
         matches_dict = matches.to_dict(orient='records')
         return jsonify(matches_dict), 200
 
@@ -122,4 +127,32 @@ def fetch_team_squad():
         return jsonify({"error": "Invalid match_id or team_name"}), 400
     except Exception as e:
         print(f"Error in fetch_team_squad: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
+
+@match_analysis_bp.route('/fetch_match_overview', methods=['POST'])
+def fetch_match_overview():
+    try:
+        data = request.get_json()
+        match_id = int(data.get('match_id'))
+
+        match_overview_data = pd.DataFrame([matches_cache[match_id]])
+        match_data = pd.DataFrame(match_data_cache[match_id])
+
+        results = match_overview_results(match_overview_data, match_data)
+
+        def convert_numpy_types(obj):
+            if isinstance(obj, np.int64):
+                return int(obj)  # Convert np.int64 to Python int
+            elif isinstance(obj, np.float64):
+                return float(obj)  # Convert np.float64 to Python float
+            else:
+                return obj
+
+        match_overview_data = {key: convert_numpy_types(value) for key, value in results.items()}
+
+        return jsonify(match_overview_data)
+    except ValueError:
+        return jsonify({"error": "Invalid match_id"}), 400
+    except Exception as e:
+        print(f"Error in fetch_match_overview: ${e}")
         return jsonify({"error": "Internal Server Error"}), 500

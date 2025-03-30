@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Cache match data
             matchCache[match_id] = data;
             getMatchGraph(match_id);
-
+            loadMatchOverview(match_id);
             // Render content for the currently active tab
             const activeTab = document.querySelector('.tab-button.active');
             if (activeTab) {
@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         })
         .catch(error => console.error("Error fetching match data:", error));
+
 });
 
 });
@@ -73,6 +74,7 @@ function populateMatchesDropdown(competition_id, season_id) {
     })
     .then(response => response.json())
     .then(data => {
+        console.log("Comp data: ", competition_id, season_id)
         // Clear the loading message
         matchDropdown.innerHTML = '';
 
@@ -270,7 +272,6 @@ function createDynamicTableHTML(data) {
     return tableHTML;
 }
 
-
 function loadSquadForTab(teamName, matchId, containerId) {
     const container = document.getElementById(containerId);
     container.innerHTML = '<p>Loading...</p>'; // Display a loading message
@@ -289,6 +290,50 @@ function loadSquadForTab(teamName, matchId, containerId) {
             container.innerHTML = '<p>Error loading data.</p>';
         });
 }
+
+function loadMatchOverview(matchId) {
+
+    const matchFetch = fetch('/fetch_match', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ match_id: matchId })
+    });
+
+    const matchOverviewFetch = fetch('/fetch_match_overview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ match_id: matchId })
+    });
+
+    // Wait for both fetches to resolve
+    Promise.all([matchFetch, matchOverviewFetch])
+        .then(async ([matchResponse, overviewResponse]) => {
+            const matchData = await matchResponse.json();
+            const overviewData = await overviewResponse.json();
+
+            console.log(overviewData)
+            document.querySelector('.homeTeamName').textContent = overviewData.home_team
+            document.querySelector('.awayTeamName').textContent = overviewData.away_team
+            document.querySelector('.matchScore').textContent = overviewData.home_score + ' - ' + overviewData.away_score
+            document.querySelector('.homeTeam .scorers').textContent = overviewData.home_goals
+            document.querySelector('.awayTeam .scorers').textContent = overviewData.away_goals
+            document.querySelector('.homeTeam .assists').textContent = overviewData.home_assists
+            document.querySelector('.awayTeam .assists').textContent = overviewData.away_assists
+            document.querySelector('.homeTeam .manager').textContent = overviewData.home_managers
+            document.querySelector('.awayTeam .manager').textContent = overviewData.away_managers
+            document.querySelector('.referee').textContent = 'Referee: ' + overviewData.referee
+            document.querySelector('#homeTeamShots').textContent = overviewData.home_shots
+            document.querySelector('#awayTeamShots').textContent = overviewData.away_shots
+            document.querySelector('#homeTeamPassesAttempted').textContent = overviewData.home_passes
+            document.querySelector('#awayTeamPassesAttempted').textContent = overviewData.away_passes
+            document.querySelector('#homeTeamPassesCompleted').textContent = overviewData.home_passes_complete
+            document.querySelector('#awayTeamPassesCompleted').textContent = overviewData.away_passes_complete
+         })
+        .catch(error => {
+            console.error("Error loading match data:", error);
+        });
+}
+
 
 
 
